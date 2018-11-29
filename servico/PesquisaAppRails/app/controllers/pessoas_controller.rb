@@ -23,12 +23,12 @@ class PessoasController < ApplicationController
             
             @conn.execute("  insert into pessoas(#{colunas}) 
                             values( #{pessoa.codigo_fonte}, 
-                                    #{pessoa.cpf},
+                                    '#{pessoa.cpf}',
                                     '#{pessoa.nome}',
                                     '#{pessoa.email}',
-                                    #{pessoa.telefone},
-                                    #{pessoa.celular},
-                                    #{pessoa.cep},
+                                    '#{pessoa.telefone}',
+                                    '#{pessoa.celular}',
+                                    '#{pessoa.cep}',
                                     #{pessoa.codigo_UF},
                                     #{pessoa.codigo_cidade},
                                     #{pessoa.codigo_municipio},
@@ -88,12 +88,12 @@ class PessoasController < ApplicationController
 
         @conn.execute(" update pessoas set 
                         codigo_fonte = #{pessoa.codigo_fonte}, 
-                        cpf = #{pessoa.cpf}, 
+                        cpf = '#{pessoa.cpf}', 
                         nome = '#{pessoa.nome}', 
                         email = '#{pessoa.email}', 
-                        telefone = #{pessoa.telefone}, 
-                        celular = #{pessoa.celular}, 
-                        cep = #{pessoa.cep}, 
+                        telefone = '#{pessoa.telefone}', 
+                        celular = '#{pessoa.celular}', 
+                        cep = '#{pessoa.cep}', 
                         codigo_UF = #{pessoa.codigo_UF}, 
                         codigo_cidade = #{pessoa.codigo_cidade}, 
                         codigo_municipio = #{pessoa.codigo_municipio}, 

@@ -10,29 +10,29 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Button } from "@material-ui/core";
 import AddPessoa from "./components/AddPessoa/AddPessoa";
 import ProgressBar from "./components/ProgressBar/ProgressBar";
+import Snackbar from "@material-ui/core/Snackbar";
+import MySnackbarContentWrapper from "./components/MySnackbarContent/MySnackbarContent";
 
-// const styles = {
-//   hide: {
-//     display: none
-//   }
-// };
-
+const baseUrl = 'http://localhost:3000/pessoas';
 class App extends Component {
   state = {
     pessoas: [],
-    showDialog: false
-
+    showDialog: false,
+    carregando: true,
+    openSnack: false,
+    snackBarVariant: "",
+    snackMessage: ""
   };
 
   componentDidMount() {
-    axios.get("http://localhost:3000/pessoas").then(res => {
-      this.setState({ pessoas: res.data });
-    });
+    this.setState({ carregando: true });
+
+    this.newMethod();
   }
 
   deleteClick = id => {
     axios
-      .delete(`http://localhost:3000/pessoas/${id}/apagar`)
+      .delete(`${baseUrl}/${id}/apagar`)
       .then(res => {
         this.setState(prevState => {
           return {
@@ -46,7 +46,31 @@ class App extends Component {
         console.log(err);
       });
   };
-  // className={styles.hide}
+
+  editClick = id => {
+    axios.
+        put(`${baseUrl}/pessoas/${id}`)
+        .then(res => {
+
+        })
+  }
+
+  handleSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.setState({ openSnack: false });
+  };
+
+  newMethod() {
+    axios
+      .get(baseUrl)
+      .then(res => {
+        this.setState({ pessoas: res.data });
+      })
+      .then(this.setState({ carregando: false }));
+  }
+
   render() {
     return (
       <div>
@@ -55,18 +79,25 @@ class App extends Component {
             <Typography variant="h6" align="center">
               Lista de Pessoas
             </Typography>
-            <ProgressBar ></ProgressBar>
+            <div
+              style={{
+                textAlign: "center",
+                display: this.state.carregando ? "block" : "none"
+              }}
+            >
+              <ProgressBar />
+            </div>
             <List>
               {this.state.pessoas.map(pessoa => (
                 <ListItem button key={pessoa.numero_registro}>
-                  <ListItemText primary={pessoa.nome} />
+                  <ListItemText primary={pessoa.nome} secondary={pessoa.cpf} />
                   <Button>
                     <DeleteIcon
                       onClick={() => this.deleteClick(pessoa.numero_registro)}
                     />
                   </Button>
                   <Button>
-                    <EditIcon />
+                    <EditIcon onClick={() => {this.editClick(pessoa.numero_registro)}} />
                   </Button>
                 </ListItem>
               ))}
@@ -84,13 +115,40 @@ class App extends Component {
         </Grid>
         <AddPessoa
           open={this.state.showDialog}
-          close={() => {
-            this.setState({ showDialog: false });      
-            // axios.get("http://localhost:3000/pessoas").then(res => {
-            //   this.setState({ pessoas: res.data });
-            // });
+          close={v => {
+            if (v) {
+              this.setState({
+                openSnack: true,
+                snackBarVariant: "success",
+                snackMessage: "Pessoa adicionada com succeso",
+                carregando: true
+              });
+
+              axios
+                .get("http://localhost:3000/pessoas")
+                .then(res => {
+                  this.setState({ pessoas: res.data });
+                })
+                .then(this.setState({ carregando: false }));
+            }
+            this.setState({ showDialog: false });
           }}
         />
+        <Snackbar
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center"
+          }}
+          open={this.state.openSnack}
+          autoHideDuration={4000}
+          onClose={this.handleSnackClose}
+        >
+          <MySnackbarContentWrapper
+            onClose={this.handleSnackClose}
+            variant={this.state.snackBarVariant}
+            message={this.state.snackMessage}
+          />
+        </Snackbar>
       </div>
     );
   }

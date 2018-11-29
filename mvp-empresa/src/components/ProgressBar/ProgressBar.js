@@ -30,7 +30,7 @@ class ProgressBar extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
+      <div >
         <CircularProgress
           className={classes.progress}
           variant="determinate"

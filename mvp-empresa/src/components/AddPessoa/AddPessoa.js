@@ -8,6 +8,9 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Button } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import MySnackbarContentWrapper from "../MySnackbarContent/MySnackbarContent";
+
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 const baseUrl = "http://localhost:3000/";
@@ -25,6 +28,10 @@ const possuiCarro = [
 
 class AddPessoa extends Component {
   state = {
+    openSnack: false,
+    snackBarVariant: "",
+    snackMessage: "",
+
     cidades: [],
     cidade: "",
     estadosCivis: [],
@@ -71,7 +78,8 @@ class AddPessoa extends Component {
     codigo_renda: "",
     codigo_profissao: "",
     codigo_posicao_trabalho: "",
-    possui_carro: ""
+    possui_carro: "",
+    codigo_fonte: ""
   };
 
   componentDidMount() {
@@ -217,14 +225,32 @@ class AddPessoa extends Component {
       </MenuItem>
     ));
 
-  selectPossuiCarro = () => 
+  selectClasse = () => 
+    ["A", "B", "C", "D", "E"].map(item => (
+      <MenuItem key={item} value={item}>
+        {item}
+      </MenuItem>
+    ));
+
+  selectPossuiCarro = () =>
     possuiCarro.map(item => (
       <MenuItem key={item.codigo} value={item.codigo}>
         {item.valor}
       </MenuItem>
     ));
 
+  handleSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.setState({ openSnack: false });
+  };
+
   addButton = () => {
+    const st = this.state;
+
+    // if(st.nome.length > 100 || st.email.length > 40 || se. )
+
     axios
       .post(`${baseUrl}pessoas/cadastrar`, {
         codigo_fonte: this.state.codigo_fonte,
@@ -277,10 +303,33 @@ class AddPessoa extends Component {
           "funcionario: " + this.state.funcionario,
           "moradia: " + this.state.moradia,
           "possui_carro: " + this.state.possui_carro,
-          "raca: " + this.state.raca,
-          "cidade: " + this.state.cidade
+          "raca: " + this.state.raca
         )
       )
+      .then(res => {
+        if (res.status === 200) {
+          this.props.close(true);
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 418) {
+          this.setState({
+            openSnack: true,
+            snackBarVariant: "warning",
+            snackMessage: "preencha todos os campos adequadamente"
+          });
+        }
+        if (error.response.status === 500) {
+          this.setState({
+            openSnack: true,
+            snackBarVariant: "error",
+            snackMessage: "Erro interno, por favor tente novamente"
+          });
+        }
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      });
   };
 
   render() {
@@ -291,7 +340,23 @@ class AddPessoa extends Component {
           <DialogContentText>
             Preencha os campos abaixo para adicionar uma nova pessoa
           </DialogContentText>
+          <Snackbar
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "center"
+            }}
+            open={this.state.openSnack}
+            autoHideDuration={6000}
+            onClose={this.handleSnackClose}
+          >
+            <MySnackbarContentWrapper
+              onClose={this.handleSnackClose}
+              variant={this.state.snackBarVariant}
+              message={this.state.snackMessage}
+            />
+          </Snackbar>
           <TextField
+            required
             autoFocus
             value={this.state.nome}
             onChange={event => {
@@ -302,8 +367,10 @@ class AddPessoa extends Component {
             label="Nome"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 100 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.cpf}
             onChange={event => {
@@ -313,8 +380,10 @@ class AddPessoa extends Component {
             label="CPF"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 11 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.email}
             onChange={event => {
@@ -324,8 +393,10 @@ class AddPessoa extends Component {
             label="Email"
             type="email"
             fullWidth
+            inputProps={{ maxLength: 40 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.telefone}
             onChange={event => {
@@ -335,8 +406,10 @@ class AddPessoa extends Component {
             label="Telefone"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 30 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.celular}
             onChange={event => {
@@ -346,8 +419,10 @@ class AddPessoa extends Component {
             label="Celular"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 30 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.cep}
             onChange={event => {
@@ -357,19 +432,11 @@ class AddPessoa extends Component {
             label="CEP"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 10 }}
           />
+
           <TextField
-            margin="dense"
-            value={this.state.classeSocial}
-            onChange={event => {
-              this.setState({ classeSocial: event.target.value });
-            }}
-            id="classeSocial"
-            label="Classe social"
-            type="text"
-            fullWidth
-          />
-          <TextField
+            required
             margin="dense"
             value={this.state.imovel}
             onChange={event => {
@@ -379,8 +446,10 @@ class AddPessoa extends Component {
             label="Imóvel"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 30 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.funcionario}
             onChange={event => {
@@ -390,8 +459,10 @@ class AddPessoa extends Component {
             label="Funcionário"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 30 }}
           />
           <TextField
+            required
             margin="dense"
             value={this.state.moradia}
             onChange={event => {
@@ -401,31 +472,10 @@ class AddPessoa extends Component {
             label="Moradia"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 20 }}
           />
           <TextField
-            select
-            margin="dense"
-            value={this.state.possuiCarro}
-            onChange={event => {
-              const pc = () => {
-               let c = possuiCarro.filter(c => {
-                  return c.codigo === event.target.value;
-                });
-                return c[0].codigo;
-              };
-              this.setState({
-                possuiCarro: event.target.value,
-                possui_carro: pc()
-              });
-            }}
-            id="possui_Carro"
-            label="Possui carro"
-            type="text"
-            fullWidth
-          >
-            {this.selectPossuiCarro()}
-          </TextField>
-          <TextField
+            required
             margin="dense"
             value={this.state.raca}
             onChange={event => {
@@ -435,8 +485,10 @@ class AddPessoa extends Component {
             label="Raça"
             type="text"
             fullWidth
+            inputProps={{ maxLength: 10 }}
           />
           <TextField
+            required
             select
             value={this.state.uf}
             onChange={event => {
@@ -457,6 +509,22 @@ class AddPessoa extends Component {
             {this.selectUf()}
           </TextField>
           <TextField
+            select
+            required
+            margin="dense"
+            value={this.state.classeSocial}
+            onChange={event => {
+              this.setState({ classeSocial: event.target.value });
+            }}
+            id="classeSocial"
+            label="Classe social"
+            type="text"
+            fullWidth
+          >
+          {this.selectClasse()}          
+          </TextField>
+          <TextField
+            required
             select
             value={this.state.faixaEtaria}
             onChange={event => {
@@ -480,6 +548,7 @@ class AddPessoa extends Component {
             {this.selectFaixaEtaria()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.cidade}
             onChange={event => {
@@ -503,6 +572,7 @@ class AddPessoa extends Component {
             {this.selectCidade()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.fonte}
             onChange={event => {
@@ -526,6 +596,7 @@ class AddPessoa extends Component {
             {this.selectFontes()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.estadoCivil}
             onChange={event => {
@@ -549,6 +620,7 @@ class AddPessoa extends Component {
             {this.selectEstadoCivil()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.profissao}
             onChange={event => {
@@ -572,6 +644,7 @@ class AddPessoa extends Component {
             {this.selectProfissoes()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.renda}
             onChange={event => {
@@ -595,6 +668,31 @@ class AddPessoa extends Component {
             {this.selectRendas()}
           </TextField>
           <TextField
+            required
+            select
+            margin="dense"
+            value={this.state.possuiCarro}
+            onChange={event => {
+              const pc = () => {
+                let c = possuiCarro.filter(c => {
+                  return c.codigo === event.target.value;
+                });
+                return c[0].codigo;
+              };
+              this.setState({
+                possuiCarro: event.target.value,
+                possui_carro: pc()
+              });
+            }}
+            id="possui_Carro"
+            label="Possui carro"
+            type="text"
+            fullWidth
+          >
+            {this.selectPossuiCarro()}
+          </TextField>
+          <TextField
+            required
             select
             value={this.state.instrucao}
             onChange={event => {
@@ -618,6 +716,7 @@ class AddPessoa extends Component {
             {this.selectInstrucoes()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.municipio}
             onChange={event => {
@@ -641,6 +740,7 @@ class AddPessoa extends Component {
             {this.selectMunicipios()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.posicaoTrabalho}
             onChange={event => {
@@ -664,6 +764,7 @@ class AddPessoa extends Component {
             {this.selectPosicoesTrabalho()}
           </TextField>
           <TextField
+            required
             select
             value={this.state.sexo}
             onChange={event => {
@@ -678,12 +779,13 @@ class AddPessoa extends Component {
             {this.selectSexo()}
           </TextField>
           <TextField
+            required
             InputLabelProps={{ shrink: true }}
             value={this.state.dataNascimento}
             onChange={event => {
               this.setState({ dataNascimento: event.target.value });
             }}
-            margin="normal" 
+            margin="normal"
             id="data_nascimento"
             label="Data de nascimento"
             type="text"
@@ -691,7 +793,7 @@ class AddPessoa extends Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.close()} color="primary">
+          <Button onClick={() => this.props.close(false)} color="primary">
             Cancelar
           </Button>
           <Button onClick={() => this.addButton()} color="primary">

@@ -38,29 +38,29 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table "pessoas", primary_key: "numero_registro", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "codigo_fonte", null: false
-    t.integer "cpf", null: false
-    t.string "nome", limit: 100
-    t.string "email", limit: 40
-    t.integer "telefone"
-    t.integer "celular"
-    t.integer "cep"
+    t.string "cpf", limit: 11, null: false
+    t.string "nome", limit: 100, null: false
+    t.string "email", limit: 40, null: false
+    t.string "telefone", limit: 30, null: false
+    t.string "celular", limit: 30, null: false
+    t.string "cep", limit: 10, null: false
     t.integer "codigo_UF", null: false
     t.integer "codigo_cidade", null: false
     t.integer "codigo_municipio", null: false
-    t.string "sexo", limit: 1
-    t.date "data_nascimento"
+    t.string "sexo", limit: 1, null: false
+    t.date "data_nascimento", null: false
     t.integer "codigo_faixa_etaria", null: false
     t.integer "codigo_estado_civil", null: false
-    t.string "classe_social", limit: 1
+    t.string "classe_social", limit: 1, null: false
     t.integer "codigo_instrucao", null: false
     t.integer "codigo_renda", null: false
     t.integer "codigo_profissao", null: false
     t.integer "codigo_posicao_trabalho", null: false
-    t.string "imovel", limit: 30
-    t.string "funcionario", limit: 30
-    t.string "moradia", limit: 20
-    t.boolean "possui_carro"
-    t.string "raca", limit: 8
+    t.string "imovel", limit: 30, null: false
+    t.string "funcionario", limit: 30, null: false
+    t.string "moradia", limit: 20, null: false
+    t.boolean "possui_carro", null: false
+    t.string "raca", limit: 10, null: false
     t.index ["codigo_UF"], name: "codigo_UF"
     t.index ["codigo_cidade"], name: "codigo_cidade"
     t.index ["codigo_estado_civil"], name: "codigo_estado_civil"
