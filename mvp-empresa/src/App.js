@@ -21,13 +21,15 @@ class App extends Component {
     carregando: true,
     openSnack: false,
     snackBarVariant: "",
-    snackMessage: ""
+    snackMessage: "",
+    isEdit: false,
+    id: ''
   };
 
   componentDidMount() {
     this.setState({ carregando: true });
 
-    this.newMethod();
+    this.getPessoas();
   }
 
   deleteClick = id => {
@@ -62,7 +64,7 @@ class App extends Component {
     this.setState({ openSnack: false });
   };
 
-  newMethod() {
+  getPessoas() {
     axios
       .get(baseUrl)
       .then(res => {
@@ -97,7 +99,9 @@ class App extends Component {
                     />
                   </Button>
                   <Button>
-                    <EditIcon onClick={() => {this.editClick(pessoa.numero_registro)}} />
+                    <EditIcon onClick={() => {
+                      this.setState({isEdit: true, id: pessoa.numero_registro, showDialog: true})
+                    }} />
                   </Button>
                 </ListItem>
               ))}
@@ -113,23 +117,18 @@ class App extends Component {
             </Grid>
           </Grid>
         </Grid>
-        <AddPessoa
+        <AddPessoa isEdit = {this.state.isEdit} id = {this.state.id}
           open={this.state.showDialog}
           close={v => {
             if (v) {
               this.setState({
                 openSnack: true,
                 snackBarVariant: "success",
-                snackMessage: "Pessoa adicionada com succeso",
+                snackMessage: "Operação realizada com succeso",
                 carregando: true
               });
 
-              axios
-                .get("http://localhost:3000/pessoas")
-                .then(res => {
-                  this.setState({ pessoas: res.data });
-                })
-                .then(this.setState({ carregando: false }));
+              this.getPessoas();
             }
             this.setState({ showDialog: false });
           }}

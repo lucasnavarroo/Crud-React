@@ -52,34 +52,34 @@ class AddPessoa extends Component {
     renda: "",
     ufs: [],
     uf: "",
-    sexo: "",
-
-    cpf: "",
-    nome: "",
-    email: "",
-    telefone: "",
-    celular: "",
-    cep: "",
-    codigo_UF: "",
-    dataNascimento: "",
-    classeSocial: "",
-    imovel: "",
-    funcionario: "",
-    moradia: "",
-    possuiCarro: "",
-    raca: "",
-
-    codigo_UF: "",
-    codigo_cidade: "",
-    codigo_municipio: "",
-    codigo_faixa_etaria: "",
-    codigo_estado_civil: "",
-    codigo_instrucao: "",
-    codigo_renda: "",
-    codigo_profissao: "",
-    codigo_posicao_trabalho: "",
     possui_carro: "",
-    codigo_fonte: ""
+
+    inputs: {
+      codigo_fonte: "",
+      cpf: "",
+      nome: "",
+      email: "",
+      telefone: "",
+      celular: "",
+      cep: "",
+      codigo_UF: "",
+      codigo_cidade: "",
+      codigo_municipio: "",
+      sexo: "",
+      dataNascimento: "",
+      codigo_faixa_etaria: "",
+      codigo_estado_civil: "",
+      classeSocial: "",
+      codigo_instrucao: "",
+      codigo_renda: "",
+      codigo_profissao: "",
+      codigo_posicao_trabalho: "",
+      imovel: "",
+      funcionario: "",
+      moradia: "",
+      possuiCarro: "",
+      raca: ""
+    }
   };
 
   componentDidMount() {
@@ -225,7 +225,7 @@ class AddPessoa extends Component {
       </MenuItem>
     ));
 
-  selectClasse = () => 
+  selectClasse = () =>
     ["A", "B", "C", "D", "E"].map(item => (
       <MenuItem key={item} value={item}>
         {item}
@@ -247,12 +247,12 @@ class AddPessoa extends Component {
   };
 
   addButton = () => {
-    const st = this.state;
-
-    // if(st.nome.length > 100 || st.email.length > 40 || se. )
+    const urlRequest = this.props.isEdit
+      ? `${baseUrl}pessoas/${this.props.id}`
+      : `${baseUrl}pessoas/cadastrar`;
 
     axios
-      .post(`${baseUrl}pessoas/cadastrar`, {
+      .post(urlRequest, {
         codigo_fonte: this.state.codigo_fonte,
         cpf: this.state.cpf,
         nome: this.state.nome,
@@ -278,34 +278,6 @@ class AddPessoa extends Component {
         possui_carro: this.state.possuiCarro,
         raca: this.state.raca
       })
-      .then(
-        console.log(
-          "codigo_fonte: " + this.state.codigo_fonte,
-          "cpf: " + this.state.cpf,
-          "nome: " + this.state.nome,
-          "email: " + this.state.email,
-          "telefone: " + this.state.telefone,
-          "celular: " + this.state.celular,
-          "cep: " + this.state.cep,
-          "codigo_UF: " + this.state.codigo_UF,
-          "codigo_cidade: " + this.state.codigo_cidade,
-          "codigo_municipio: " + this.state.codigo_municipio,
-          "sexo: " + this.state.sexo,
-          "data_nascimento: " + this.state.dataNascimento,
-          "codigo_faixa_etaria: " + this.state.codigo_faixa_etaria,
-          "codigo_estado_civil: " + this.state.codigo_estado_civil,
-          "classe_social: " + this.state.classeSocial,
-          "codigo_instrucao: " + this.state.codigo_instrucao,
-          "codigo_renda: " + this.state.codigo_renda,
-          "codigo_profissao: " + this.state.codigo_profissao,
-          "codigo_posicao_trabalho: " + this.state.codigo_posicao_trabalho,
-          "imovel: " + this.state.imovel,
-          "funcionario: " + this.state.funcionario,
-          "moradia: " + this.state.moradia,
-          "possui_carro: " + this.state.possui_carro,
-          "raca: " + this.state.raca
-        )
-      )
       .then(res => {
         if (res.status === 200) {
           this.props.close(true);
@@ -521,7 +493,7 @@ class AddPessoa extends Component {
             type="text"
             fullWidth
           >
-          {this.selectClasse()}          
+            {this.selectClasse()}
           </TextField>
           <TextField
             required
