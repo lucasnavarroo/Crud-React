@@ -251,66 +251,126 @@ class AddPessoa extends Component {
       ? `${baseUrl}pessoas/${this.props.id}`
       : `${baseUrl}pessoas/cadastrar`;
 
-    axios
-      .post(urlRequest, {
-        codigo_fonte: this.state.codigo_fonte,
-        cpf: this.state.cpf,
-        nome: this.state.nome,
-        email: this.state.email,
-        telefone: this.state.telefone,
-        celular: this.state.celular,
-        cep: this.state.cep,
-        codigo_UF: this.state.codigo_UF,
-        codigo_cidade: this.state.codigo_cidade,
-        codigo_municipio: this.state.codigo_municipio,
-        sexo: this.state.sexo,
-        data_nascimento: this.state.dataNascimento,
-        codigo_faixa_etaria: this.state.codigo_faixa_etaria,
-        codigo_estado_civil: this.state.codigo_estado_civil,
-        classe_social: this.state.classeSocial,
-        codigo_instrucao: this.state.codigo_instrucao,
-        codigo_renda: this.state.codigo_renda,
-        codigo_profissao: this.state.codigo_profissao,
-        codigo_posicao_trabalho: this.state.codigo_posicao_trabalho,
-        imovel: this.state.imovel,
-        funcionario: this.state.funcionario,
-        moradia: this.state.moradia,
-        possui_carro: this.state.possuiCarro,
-        raca: this.state.raca
-      })
-      .then(res => {
-        if (res.status === 200) {
-          this.props.close(true);
-        }
-      })
-      .catch(error => {
-        if (error.response.status === 418) {
-          this.setState({
-            openSnack: true,
-            snackBarVariant: "warning",
-            snackMessage: "preencha todos os campos adequadamente"
-          });
-        }
-        if (error.response.status === 500) {
-          this.setState({
-            openSnack: true,
-            snackBarVariant: "error",
-            snackMessage: "Erro interno, por favor tente novamente"
-          });
-        }
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      });
+    if (!this.props.isEdit) {
+      console.log("fui clicado");
+      axios.defaults.headers.post['crossDomain'] = true;
+      axios
+        .post(urlRequest, {
+          codigo_fonte: this.state.codigo_fonte,
+          cpf: this.state.cpf,
+          nome: this.state.nome,
+          email: this.state.email,
+          telefone: this.state.telefone,
+          celular: this.state.celular,
+          cep: this.state.cep,
+          codigo_UF: this.state.codigo_UF,
+          codigo_cidade: this.state.codigo_cidade,
+          codigo_municipio: this.state.codigo_municipio,
+          sexo: this.state.sexo,
+          data_nascimento: this.state.dataNascimento,
+          codigo_faixa_etaria: this.state.codigo_faixa_etaria,
+          codigo_estado_civil: this.state.codigo_estado_civil,
+          classe_social: this.state.classeSocial,
+          codigo_instrucao: this.state.codigo_instrucao,
+          codigo_renda: this.state.codigo_renda,
+          codigo_profissao: this.state.codigo_profissao,
+          codigo_posicao_trabalho: this.state.codigo_posicao_trabalho,
+          imovel: this.state.imovel,
+          funcionario: this.state.funcionario,
+          moradia: this.state.moradia,
+          possui_carro: this.state.possuiCarro,
+          raca: this.state.raca
+        })
+        .then(res => {
+          if (res.status === 200) {
+            this.props.close(true);
+            console.log(this.state.dataNascimento);
+          }
+        })
+        .catch(error => {
+          if (error.response.status === 418 || error.response.status === 404) {
+            this.setState({
+              openSnack: true,
+              snackBarVariant: "warning",
+              snackMessage: "preencha todos os campos adequadamente"
+            });
+          }
+          if (error.response.status === 500) {
+            this.setState({
+              openSnack: true,
+              snackBarVariant: "error",
+              snackMessage: "Erro interno, por favor tente novamente"
+            });
+          }
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    } else {
+      axios.defaults.headers.post['crossDomain'] = true;
+      axios
+        .put(urlRequest, {
+          codigo_fonte: this.state.codigo_fonte,
+          cpf: this.state.cpf,
+          nome: this.state.nome,
+          email: this.state.email,
+          telefone: this.state.telefone,
+          celular: this.state.celular,
+          cep: this.state.cep,
+          codigo_UF: this.state.codigo_UF,
+          codigo_cidade: this.state.codigo_cidade,
+          codigo_municipio: this.state.codigo_municipio,
+          sexo: this.state.sexo,
+          data_nascimento: this.state.dataNascimento,
+          codigo_faixa_etaria: this.state.codigo_faixa_etaria,
+          codigo_estado_civil: this.state.codigo_estado_civil,
+          classe_social: this.state.classeSocial,
+          codigo_instrucao: this.state.codigo_instrucao,
+          codigo_renda: this.state.codigo_renda,
+          codigo_profissao: this.state.codigo_profissao,
+          codigo_posicao_trabalho: this.state.codigo_posicao_trabalho,
+          imovel: this.state.imovel,
+          funcionario: this.state.funcionario,
+          moradia: this.state.moradia,
+          possui_carro: this.state.possuiCarro,
+          raca: this.state.raca
+        })
+        .then(res => {
+          if (res.status === 200) {
+            this.props.close(true);
+          }
+        })
+        .catch(error => {
+          if (error.response.status === 418 || error.response.status === 404) {
+            this.setState({
+              openSnack: true,
+              snackBarVariant: "warning",
+              snackMessage: "preencha todos os campos adequadamente"
+            });
+          }
+          if (error.response.status === 500) {
+            this.setState({
+              openSnack: true,
+              snackBarVariant: "error",
+              snackMessage: "Erro interno, por favor tente novamente"
+            });
+          }
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        });
+    }
   };
 
   render() {
+    const titulo = this.props.isEdit ? `editar` : `adicionar`;
+
     return (
       <Dialog open={this.props.open}>
-        <DialogTitle>Adicionar</DialogTitle>
+        <DialogTitle>{titulo}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Preencha os campos abaixo para adicionar uma nova pessoa
+            Preencha os campos abaixo para {titulo} uma nova pessoa
           </DialogContentText>
           <Snackbar
             anchorOrigin={{
@@ -760,16 +820,27 @@ class AddPessoa extends Component {
             margin="normal"
             id="data_nascimento"
             label="Data de nascimento"
-            type="text"
+            type="date"
             fullWidth
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.close(false)} color="primary">
+          <Button
+            onClick={() => {
+              this.props.close(false);
+              this.setState({ openSnack: false });
+            }}
+            color="primary"
+          >
             Cancelar
           </Button>
-          <Button onClick={() => this.addButton()} color="primary">
-            Adicionar
+          <Button
+            onClick={() => {
+              this.addButton();
+            }}
+            color="primary"
+          >
+            {titulo}
           </Button>
         </DialogActions>
       </Dialog>

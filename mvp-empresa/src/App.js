@@ -34,7 +34,7 @@ class App extends Component {
 
   deleteClick = id => {
     axios
-      .delete(`${baseUrl}/${id}/apagar`)
+      .delete(`${baseUrl}/${id}/apagar`, {headers: { 'crossDomain': true, 'Content-Type': 'application/json'}})
       .then(res => {
         this.setState(prevState => {
           return {
@@ -108,7 +108,7 @@ class App extends Component {
             </List>
             <Grid container direction="row" align="center">
               <Button
-                onClick={() => this.setState({ showDialog: true })}
+                onClick={() => this.setState({ showDialog: true, isEdit: false })}
                 fullWidth={true}
                 color="primary"
               >
